@@ -1,0 +1,6 @@
+# Project Secretes
+.env
+
+# Python Folders
+__pycache__/
+venv/

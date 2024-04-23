@@ -1,0 +1,33 @@
+#!/bin/sh
+
+echo "[INFO]: start pre-commit hook"
+
+files_modified=$(git diff --name-only HEAD | grep -E '\w+\.py')
+
+if [ -z "$files_modified" ]; then
+    echo "[INFO]: there is no modified python scripts;"
+    echo "[INFO]: no formatting is required;"
+    exit 0
+fi
+
+echo "[INFO]: start flake8 stage"
+flake8 $files_modified
+
+if [ $? -ne 0 ]; then
+    echo "[ERROR]: flake8 stage was failed"
+    exit 1
+else
+    echo "[INFO]: flake8 stage successfully finished"
+fi
+
+echo "[INFO]: start black stage"
+black $files_modified --check
+
+if [ $? -ne 0 ]; then
+    echo "[ERROR]: black stage was failed"
+    exit 1
+else
+    echo "[INFO]: black stage successfully finished"
+fi
+
+echo "[INFO]: hook was successfully finished"
