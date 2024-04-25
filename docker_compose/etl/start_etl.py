@@ -1,3 +1,5 @@
+import os
+
 from workers.etl_workers import ETLWorker
 from common.settings import (
     CONNECTION_CONFIG,
@@ -8,16 +10,24 @@ from common.queries import SQL_QUERIES
 
 
 def main() -> None:
-    processes = [
-        ETLWorker(
-            CONNECTION_CONFIG,
-            f"storage_{i}.json",
-            ELASTIC_HOST,
-            INDEX_NAME,
-            query,
+    path_to_states = os.path.join(".", "states")
+
+    if not os.path.exists(path_to_states):
+        os.mkdir(path_to_states)
+
+    processes = []
+
+    for i, query in enumerate(SQL_QUERIES):
+        path_to_storage = os.path.join(path_to_states, f"storage_{i}.json")
+        processes.append(
+            ETLWorker(
+                CONNECTION_CONFIG,
+                path_to_storage,
+                ELASTIC_HOST,
+                INDEX_NAME,
+                query,
+            )
         )
-        for i, query in enumerate(SQL_QUERIES)
-    ]
 
     for process in processes:
         process.start()

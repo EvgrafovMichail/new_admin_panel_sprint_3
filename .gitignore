@@ -4,3 +4,6 @@
 # Python Folders
 __pycache__/
 venv/
+
+# ETL-service volume
+etl_states/
