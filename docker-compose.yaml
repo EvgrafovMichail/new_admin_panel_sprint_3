@@ -59,6 +59,8 @@ services:
     build:
       dockerfile: build/etl.Dockerfile
       context: .
+    volumes:
+      - ./etl_states:/app/states
     depends_on:
       database:
         condition: service_healthy
