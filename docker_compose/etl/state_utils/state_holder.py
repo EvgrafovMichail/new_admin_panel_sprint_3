@@ -13,7 +13,7 @@ class State:
 
     def get(self, key: Hashable, default: Any) -> Any:
         return self._state_buffer.get(key, default)
-    
+
     def set(self, key: Hashable, value: Any) -> None:
         self._state_buffer[key] = value
         self._storage.save_state(self._state_buffer)

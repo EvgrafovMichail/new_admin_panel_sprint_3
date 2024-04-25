@@ -15,6 +15,5 @@ ELASTIC_CONFIG = {
     "port": os.environ.get("ELASTIC_PORT"),
 }
 
-ELASTIC_HOST = f"https://{ELASTIC_CONFIG['host']}:{ELASTIC_CONFIG['port']}/"
+ELASTIC_HOST = f"http://{ELASTIC_CONFIG['host']}:{ELASTIC_CONFIG['port']}/"
 INDEX_NAME = os.environ.get("INDEX_NAME")
-

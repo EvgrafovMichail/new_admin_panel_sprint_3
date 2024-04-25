@@ -1,4 +1,3 @@
-from etl_utils.pipeline import start_etl_process
 from workers.etl_workers import ETLWorker
 from common.settings import (
     CONNECTION_CONFIG,

@@ -33,7 +33,7 @@ def start_etl_process(
 
     # day before "Train arrival" release
     date_processed_default = str(
-            datetime.datetime(
+        datetime.datetime(
             year=1895,
             month=3,
             day=21,
@@ -57,7 +57,7 @@ def start_etl_process(
                 logger.debug(f"etract {len(data_transformed)} from DB")
                 es.send_data_to_index(data_transformed, index_name)
                 logger.debug(f"process {len(data_transformed)} rows")
-                
+
                 data = next(film_work_receiver)
                 continue
 
@@ -65,3 +65,6 @@ def start_etl_process(
                 state_holder.set(date_processed_key, str(date_processed))
                 logger.debug(f"save date into storage: {str(date_processed)}")
                 data = film_work_receiver.send(date_processed)
+
+            if not data:
+                break

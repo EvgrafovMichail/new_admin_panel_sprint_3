@@ -33,7 +33,7 @@ def coroutine(func):
         next(generator)
 
         return generator
-    
+
     return wrapper
 
 
@@ -44,9 +44,9 @@ def batch_recivier(
     batch_size: int = 100,
 ) -> Generator[list[DictRow] | None, datetime.datetime, None]:
     cursor = connection.cursor(cursor_factory=DictCursor)
-    
+
     while date_processed_last := (yield):
-        cursor.execute(sql_querie, (date_processed_last, ))
+        cursor.execute(sql_querie, (date_processed_last,))
 
         while data_batch := cursor.fetchmany(size=batch_size):
             yield data_batch

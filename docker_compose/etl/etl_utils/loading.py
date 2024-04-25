@@ -23,10 +23,7 @@ class ESDataLoader:
         index_name: str,
     ) -> None:
         print(self._elastic_host)
-        elastic_client = Elasticsearch(
-            self._elastic_host,
-            verify_certs=False,
-        )
+        elastic_client = Elasticsearch(self._elastic_host)
         bulk(
             elastic_client,
             self._get_data_generator(data, index_name),
