@@ -1,6 +1,7 @@
 import datetime
 
 from typing import Any
+from time import sleep
 
 from state_utils.storage import StorageJSON
 from state_utils.state_holder import State
@@ -18,6 +19,9 @@ from etl_utils.extraction import (
 
 
 logger = EventLogger("etl")
+
+
+TIME_PAUSE = 5
 
 
 @backoff()
@@ -67,4 +71,6 @@ def start_etl_process(
                 data = film_work_receiver.send(date_processed)
 
             if not data:
-                break
+                logger.debug("no data was found for this request")
+                logger.debug(f"pause for {TIME_PAUSE} seconds")
+                sleep(TIME_PAUSE)
