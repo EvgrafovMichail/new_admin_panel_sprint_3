@@ -1,12 +1,17 @@
 import os
 
-from workers.etl_workers import ETLWorker
+from workers.shemas import ETLConnectionsConfig
+from workers.etl_process import ETLProcessPG2ES
 from common.settings import (
     CONNECTION_CONFIG,
-    ELASTIC_HOST,
+    ELASTIC_CONFIG,
     INDEX_NAME,
 )
 from common.queries import SQL_QUERIES
+
+from transformers.pg_to_es_transformers import (
+    TransformPG2ESFilmwork
+)
 
 
 def main() -> None:
@@ -18,14 +23,18 @@ def main() -> None:
     processes = []
 
     for i, query in enumerate(SQL_QUERIES):
-        path_to_storage = os.path.join(path_to_states, f"storage_{i}.json")
+        connections_config = ETLConnectionsConfig(
+            connection_settings_db=CONNECTION_CONFIG,
+            connection_settings_es=ELASTIC_CONFIG,
+            path_to_state_storage=os.path.join(path_to_states, f"storage_{i}.json"),
+            index_name=INDEX_NAME
+        )
+
         processes.append(
-            ETLWorker(
-                CONNECTION_CONFIG,
-                path_to_storage,
-                ELASTIC_HOST,
-                INDEX_NAME,
-                query,
+            ETLProcessPG2ES(
+                transformer=TransformPG2ESFilmwork(),
+                connections_config=connections_config,
+                sql_query=query,
             )
         )
 

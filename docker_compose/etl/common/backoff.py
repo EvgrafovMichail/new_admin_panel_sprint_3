@@ -10,7 +10,10 @@ logger = EventLogger("backoff")
 
 
 def backoff(
-    start_sleep_time: float = 0.1, factor: float = 2, sleep_time_limit: float = 10
+    start_sleep_time: float = 0.1,
+    factor: float = 2,
+    sleep_time_limit: float = 10,
+    exceptions: tuple[Exception] = (Exception, ),
 ) -> Callable[[Callable], Callable]:
     def backoff_wrapper(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
         degree_curr = 0
@@ -23,10 +26,10 @@ def backoff(
                 try:
                     result = func(*args, **kwargs)
 
-                except Exception:
+                except exceptions as exception:
                     logger.error(
-                        f"fail to complete {func.__name__} due to exception: ",
-                        exc_info=True,
+                        f"fail to complete {func.__name__} due to exception: "
+                        f"{str(exception)}"
                     )
 
                     sleep_time_base = (
