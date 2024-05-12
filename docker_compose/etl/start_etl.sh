@@ -121,5 +121,127 @@ curl -XPUT "http://$ELASTIC_HOST:$ELASTIC_PORT/movies" -H 'Content-Type: applica
   }
 }'
 
+echo "[INFO] create genres index"
+curl -XPUT "http://$ELASTIC_HOST:$ELASTIC_PORT/genres" -H 'Content-Type: application/json' -d'{
+    "settings": {
+        "refresh_interval": "1s",
+        "analysis": {
+            "filter": {
+                "english_stop": {
+                    "type":       "stop",
+                    "stopwords":  "_english_"
+                },
+                "english_stemmer": {
+                    "type": "stemmer",
+                    "language": "english"
+                },
+                "english_possessive_stemmer": {
+                    "type": "stemmer",
+                    "language": "possessive_english"
+                },
+                "russian_stop": {
+                    "type":       "stop",
+                    "stopwords":  "_russian_"
+                },
+                "russian_stemmer": {
+                    "type": "stemmer",
+                    "language": "russian"
+                }
+            },
+            "analyzer": {
+                "ru_en": {
+                    "tokenizer": "standard",
+                    "filter": [
+                        "lowercase",
+                        "english_stop",
+                        "english_stemmer",
+                        "english_possessive_stemmer",
+                        "russian_stop",
+                        "russian_stemmer"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "dynamic": "strict",
+        "properties": {
+            "id": {
+                "type": "keyword"
+            },
+            "name": {
+                "type": "keyword"
+            },
+            "description": {
+                "type": "text",
+                "analyzer": "ru_en"
+            }
+        }
+    }
+}
+'
+
+echo "[INFO] create persons index"
+curl -XPUT "http://$ELASTIC_HOST:$ELASTIC_PORT/persons" -H 'Content-Type: application/json' -d'{
+    "settings": {
+        "refresh_interval": "1s",
+        "analysis": {
+            "filter": {
+                "english_stop": {
+                    "type":       "stop",
+                    "stopwords":  "_english_"
+                },
+                "english_stemmer": {
+                    "type": "stemmer",
+                    "language": "english"
+                },
+                "english_possessive_stemmer": {
+                    "type": "stemmer",
+                    "language": "possessive_english"
+                },
+                "russian_stop": {
+                    "type":       "stop",
+                    "stopwords":  "_russian_"
+                },
+                "russian_stemmer": {
+                    "type": "stemmer",
+                    "language": "russian"
+                }
+            },
+            "analyzer": {
+                "ru_en": {
+                    "tokenizer": "standard",
+                    "filter": [
+                        "lowercase",
+                        "english_stop",
+                        "english_stemmer",
+                        "english_possessive_stemmer",
+                        "russian_stop",
+                        "russian_stemmer"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "dynamic": "strict",
+        "properties": {
+            "id": {
+                "type": "keyword"
+            },
+            "full_name": {
+                "type": "text",
+                "analyzer": "ru_en",
+                "fields": {
+                    "raw": { 
+                        "type":  "keyword"
+                    }
+                }
+            }
+        }
+    }
+}
+'
+
 echo "[INFO]: run ETL"
 python start_etl.py
