@@ -1,4 +1,4 @@
-QUERY_FILM_WORK = """
+QUERY_FILM_WORK_FILM_WORK = """
 SELECT
    fw.id,
    fw.title,
@@ -9,9 +9,9 @@ SELECT
    COALESCE (
        json_agg(
            DISTINCT jsonb_build_object(
-               'person_role', pfw.role,
-               'person_id', p.id,
-               'person_name', p.full_name
+               'role', pfw.role,
+               'id', p.id,
+               'full_name', p.full_name
            )
        ) FILTER (WHERE p.id is not null),
        '[]'
@@ -27,7 +27,7 @@ GROUP BY fw.id
 ORDER BY fw.updated_at;
 """
 
-QUERY_PERSON = """
+QUERY_FILM_WORK_PERSON = """
 SELECT
    fw.id,
    fw.title,
@@ -38,9 +38,9 @@ SELECT
    COALESCE (
        json_agg(
            DISTINCT jsonb_build_object(
-               'person_role', pfw.role,
-               'person_id', p.id,
-               'person_name', p.full_name
+               'role', pfw.role,
+               'id', p.id,
+               'full_name', p.full_name
            )
        ) FILTER (WHERE p.id is not null),
        '[]'
@@ -56,7 +56,7 @@ GROUP BY fw.id
 ORDER BY updated_at;
 """
 
-QUERY_GENRE = """
+QUERY_FILM_WORK_GENRE = """
 SELECT
    fw.id,
    fw.title,
@@ -67,9 +67,9 @@ SELECT
    COALESCE (
        json_agg(
            DISTINCT jsonb_build_object(
-               'person_role', pfw.role,
-               'person_id', p.id,
-               'person_name', p.full_name
+               'role', pfw.role,
+               'id', p.id,
+               'full_name', p.full_name
            )
        ) FILTER (WHERE p.id is not null),
        '[]'
@@ -85,5 +85,16 @@ GROUP BY fw.id
 ORDER BY updated_at;
 """
 
+QUERY_PERSON = """
+SELECT id, full_name, updated_at
+FROM content.person
+WHERE updated_at > %s
+ORDER BY updated_at;
+"""
 
-SQL_QUERIES = [QUERY_FILM_WORK, QUERY_PERSON, QUERY_GENRE]
+QUERY_GENRE = """
+SELECT id, name, description, updated_at
+FROM content.genre
+WHERE updated_at > %s
+ORDER BY updated_at;
+"""

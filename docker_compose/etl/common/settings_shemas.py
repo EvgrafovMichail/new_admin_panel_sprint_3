@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from pydantic import AliasChoices, Field
 
 
-class DataBaseSettings(BaseSettings):
+class DBConnectionSettings(BaseSettings):
     dbname: str = Field(validation_alias=AliasChoices("DB_NAME"))
     user: str = Field(validation_alias=AliasChoices("DB_USER"))
     password: str = Field(validation_alias=AliasChoices("DB_PASSWORD"))
@@ -18,7 +18,8 @@ class DataBaseSettings(BaseSettings):
     )
 
 
-class ElasticSearchSettings(BaseSettings):
+class ESConnectionSettings(BaseSettings):
+    scheme: str = Field(validation_alias=AliasChoices("ELASTIC_SCHEME"))
     host: str = Field(validation_alias=AliasChoices("ELASTIC_HOST"))
     port: int = Field(
         validation_alias=AliasChoices("ELASTIC_PORT"),
