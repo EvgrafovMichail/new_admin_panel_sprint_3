@@ -17,6 +17,8 @@ logger = EventLogger("ETL-process")
 
 
 class ETLProcessPG2ES(Process):
+    ETL_TIMEOUT: float = 5
+
     _extractor: PGExtractor
     _transformer: Callable
     _loader: ESLoader
@@ -66,8 +68,6 @@ class ETLProcessPG2ES(Process):
             self._loader(self._connections_config.connection_settings_es),
         ):
             while True:
-                time.sleep(5)
-
                 data_batch = self._extractor.extract_batch(
                     self._sql_query, query_parameters=query_parameters
                 )
@@ -76,6 +76,8 @@ class ETLProcessPG2ES(Process):
                 if not data_batch:
                     query_parameters = (date_processed,)
                     self._state.set(date_processed_key, str(date_processed))
+
+                    time.sleep(self.ETL_TIMEOUT)
                     continue
 
                 data_batch_transformed = self._transformer(data_batch)
