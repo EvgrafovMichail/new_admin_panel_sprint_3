@@ -16,9 +16,14 @@ class TransformerPG2ESGeneral:
     def __init__(self, es_scheme: BaseModel) -> None:
         self._es_scheme = es_scheme
 
-    def __call__(self, data_pg: list[DictRow]) -> list[dict[str, Any]]:
+    def __call__(
+        self,
+        data_pg: list[DictRow],
+        by_alias: bool = True,
+    ) -> list[dict[str, Any]]:
         return [
-            self._es_scheme(**dict(data_frame)).model_dump() for data_frame in data_pg
+            self._es_scheme(**dict(data_frame)).model_dump(by_alias=by_alias)
+            for data_frame in data_pg
         ]
 
 
@@ -47,7 +52,7 @@ class TransformPG2ESFilmwork:
                 actors=actors,
                 writers=writers,
             )
-            data_es.append(data_frame_es.model_dump())
+            data_es.append(data_frame_es.model_dump(by_alias=False))
 
         return data_es
 
@@ -57,10 +62,10 @@ class TransformPG2ESFilmwork:
     ) -> tuple[list[str], list[PersonRecordES]]:
         role = Roles(role)
         person_names, person_info = [], []
-        person_name_key = "person_name"
+        person_name_key = "full_name"
 
         for person in persons:
-            person_role = Roles(person["person_role"])
+            person_role = Roles(person["role"])
 
             if person_role != role:
                 continue
@@ -68,8 +73,8 @@ class TransformPG2ESFilmwork:
             person_names.append(person[person_name_key])
             person_info.append(
                 PersonRecordES(
-                    person_id=person["person_id"],
-                    person_name=person[person_name_key],
+                    id=person["id"],
+                    full_name=person[person_name_key],
                 )
             )
 

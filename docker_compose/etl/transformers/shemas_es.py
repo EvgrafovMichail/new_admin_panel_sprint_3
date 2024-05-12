@@ -11,8 +11,8 @@ class GenreRecordES(BaseModel):
 
 
 class PersonRecordES(BaseModel):
-    id: UUID = Field(alias="person_id")
-    name: str = Field(alias="person_name")
+    id: UUID
+    name: str = Field(alias="full_name")
 
 
 class FilmWorkRecordES(BaseModel):
